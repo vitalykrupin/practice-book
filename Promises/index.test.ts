@@ -1,5 +1,6 @@
 import { promiseAny } from "./promiseAny";
 import { promiseAll } from "./promiseAll";
+import { promiseRace } from "./promiseRace";
 
 const mockResolve = (id: number, ms: number) =>
 	new Promise(res => setTimeout(res, ms, id));
@@ -34,5 +35,23 @@ describe('Promises: promiseAll', () => {
 	it('should return the first rejected promise (array with one rejected promise)', async () => {
 		await expect(promiseAll([mockReject(1, 100), mockResolve(2, 50), mockReject(3, 300)]))
 			.rejects.toBe(1);
+	});
+})
+
+describe('Promises: promiseRace', () => {
+	it('should return the first resolved promise', async () => {
+		const res = await promiseRace([mockResolve(1, 100), mockResolve(2, 50), mockResolve(3, 300)]);
+		expect(res).toBe(2);
+	});
+	it('should return the first rejected promise (array with only rejected promises)', async () => {
+		await expect(promiseRace([mockReject(1, 100), mockReject(2, 50), mockReject(3, 300)]))
+			.rejects.toBe(2);
+	});
+	it('should return the first rejected promise (array with one rejected promise)', async () => {
+		await expect(promiseRace([mockReject(1, 100), mockResolve(2, 200), mockResolve(3, 300)]))
+			.rejects.toBe(1);
+	});
+	it('should return the first resolved promise (array with one resolved promise)', async () => {
+		const res = await promiseRace([mockReject(1, 100), mockResolve(2, 50), mockReject(3, 300)]);
 	});
 })

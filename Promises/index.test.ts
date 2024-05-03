@@ -18,15 +18,15 @@ describe('Promises: promiseAny', () => {
 		expect(res).toBe(1);
 	});
 	it('should return array of all rejected promises in right order', async () => {
-		await expect(promiseAny([mockReject(1, 100), mockReject(2, 50), mockReject(3, 300)]))
-			.rejects.toEqual([1, 2, 3]);
+		await expect(promiseAny([mockReject(1, 100), mockReject(2, 50), mockReject(3, 300), mockReject(4, 200)]))
+			.rejects.toEqual([1, 2, 3, 4]);
 	});
 });
 
 describe('Promises: promiseAll', () => {
 	it('should return array of all resolved promises in right order', async () => {
-		const res = await promiseAll([mockResolve(1, 100), mockResolve(2, 50), mockResolve(3, 300)]);
-		expect(res).toEqual([1, 2, 3]);
+		const res = await promiseAll([mockResolve(1, 100), mockResolve(2, 50), mockResolve(3, 300), mockResolve(4, 200)]);
+		expect(res).toEqual([1, 2, 3, 4]);
 	});
 	it('should return the first rejected promise (array with only rejected promises)', async () => {
 		await expect(promiseAll([mockReject(1, 100), mockReject(2, 50), mockReject(3, 300)]))
@@ -36,7 +36,7 @@ describe('Promises: promiseAll', () => {
 		await expect(promiseAll([mockReject(1, 100), mockResolve(2, 50), mockReject(3, 300)]))
 			.rejects.toBe(1);
 	});
-})
+});
 
 describe('Promises: promiseRace', () => {
 	it('should return the first resolved promise', async () => {
@@ -54,4 +54,4 @@ describe('Promises: promiseRace', () => {
 	it('should return the first resolved promise (array with one resolved promise)', async () => {
 		const res = await promiseRace([mockReject(1, 100), mockResolve(2, 50), mockReject(3, 300)]);
 	});
-})
+});

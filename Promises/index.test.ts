@@ -1,6 +1,7 @@
 import { promiseAny } from "./promiseAny";
 import { promiseAll } from "./promiseAll";
 import { promiseRace } from "./promiseRace";
+import { promiseAllSettled } from "./promiseAllSettled";
 
 const mockResolve = (id: number, ms: number) =>
 	new Promise(res => setTimeout(res, ms, id));
@@ -53,5 +54,20 @@ describe('Promises: promiseRace', () => {
 	});
 	it('should return the first resolved promise (array with one resolved promise)', async () => {
 		const res = await promiseRace([mockReject(1, 100), mockResolve(2, 50), mockReject(3, 300)]);
+	});
+});
+
+describe('Promises: promiseAllSettled', () => {
+	it('should return array of all resolved promises in right order', async () => {
+		const res = await promiseAllSettled([mockResolve(1, 100), mockResolve(2, 50), mockResolve(3, 300)]);
+		expect(res).toEqual([1, 2, 3]);
+	});
+	it('should return array of all rejected promises in right order', async () => {
+		const res = await promiseAllSettled([mockReject(1, 100), mockReject(2, 50), mockReject(3, 300)]);
+		expect(res).toEqual([1, 2, 3]);
+	});
+	it('should return array of results and reasons of all promises in right order', async () => {
+		const res = await promiseAllSettled([mockResolve(1, 100), mockReject(2, 50), mockResolve(3, 300), mockReject(4, 200)]);
+		expect(res).toEqual([1, 2, 3, 4]);
 	});
 });
